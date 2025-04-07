@@ -578,9 +578,9 @@ class TrainManager:
         #with torch.autocast(device_type=self.device.type,
         #                    dtype=self.dtype,
         #                    enabled=self.fp16):
-            # get loss (run as during training with teacher forcing)
-            #batch_loss, _, _, correct_tokens = self.model(return_type="loss",
-            #                                                 **vars(batch))
+        # get loss (run as during training with teacher forcing)
+        #batch_loss, _, _, correct_tokens = self.model(return_type="loss",
+        #                                                 **vars(batch))
         batch_loss, _, _, correct_tokens = self.model(return_type="loss",
                                                           **vars(batch))
 
