@@ -45,8 +45,9 @@ def make_model_dir(model_dir: Path, overwrite: bool = False) -> Path:
     model_dir = model_dir.absolute()
     if model_dir.is_dir():
         if not overwrite:
-            raise FileExistsError(f"Model directory {model_dir} exists "
-                                  f"and overwriting is disabled.")
+            return model_dir
+#            raise FileExistsError(f"Model directory {model_dir} exists "
+#                                  f"and overwriting is disabled.")
         # delete previous directory to start with empty dir again
         shutil.rmtree(model_dir)
     model_dir.mkdir(parents=True)  # create model_dir recursively
@@ -575,26 +576,16 @@ def delete_ckpt(to_delete: Path) -> None:
 
 def symlink_update(target: Path, link_name: Path) -> Optional[Path]:
     """
-    This function finds the file that the symlink currently points to, sets it
-    to the new target, and returns the previous target if it exists.
-
-    :param target: A path to a file that we want the symlink to point to.
-                    no parent dir, filename only, i.e. "10000.ckpt"
-    :param link_name: This is the name of the symlink that we want to update.
-                    link name with parent dir, i.e. "models/my_model/best.ckpt"
-
-    :return:
-        - current_last: This is the previous target of the symlink, before it is
-            updated in this function. If the symlink did not exist before or did
-            not have a target, None is returned instead.
+    Update 'latest.ckpt' by copying the target file (instead of symlinking, which fails on Windows).
     """
-    if link_name.is_symlink():
-        current_last = link_name.resolve()
-        link_name.unlink()
-        link_name.symlink_to(target)
-        return current_last
-    link_name.symlink_to(target)
-    return None
+    try:
+        if link_name.exists() or link_name.is_symlink():
+            link_name.unlink()
+        shutil.copyfile(link_name.parent / target, link_name)
+        return target
+    except Exception as e:
+        logging.getLogger(__name__).warning(f"Could not update checkpoint link: {e}")
+        return None
 
 
 def flatten(array: List[List[Any]]) -> List[Any]:

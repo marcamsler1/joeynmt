@@ -246,7 +246,7 @@ class TrainManager:
         best_path = Path(self.model_dir) / "best.ckpt"
         if new_best:
             prev_path = symlink_update(symlink_target, best_path)
-            assert best_path.resolve().stem == str(self.stats.best_ckpt_iter)
+            #assert best_path.resolve().stem == str(self.stats.best_ckpt_iter)
 
         # push to and pop from the heap queue
         to_delete = None
