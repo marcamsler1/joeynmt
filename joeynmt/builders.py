@@ -166,7 +166,6 @@ def build_scheduler(
             # learning rate scheduler
             kwargs = {
                 "mode": scheduler_mode,
-                "verbose": False,
                 "threshold_mode": "abs",
                 "eps": 0.0,
                 "factor": config.get("decrease_factor", 0.1),
